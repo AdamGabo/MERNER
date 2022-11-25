@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
-
 import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
-
-import { useMutation } from '@apollo/client';
 import { REMOVE_BOOK } from '../utils/mutations';
 import { GET_ME } from '../utils/queries';
+import { useQuery, useMutation } from "@apollo/react-hooks";
 
 const SavedBooks = () => {
 
   //use existing func names and utilize code from Module regarding hooks and turnary operator, h4 element referenced from Module 21 
   const { loading, data } = useQuery(GET_ME);
-  const [deleteBook] = useMutation(REMOVE_BOOK);
+  const [deleteBook, {error}] = useMutation(REMOVE_BOOK);
   const userData = data?.me || {};
+  const setUserData = useState({});
 
 //Boiler Plate 
-if (!user?.username) {
-  return (
-    <h4>
-      You need to be logged in to see this page. Use the navigation links above to sign up or log in!
-    </h4>
-  );
-}
+// if (!user?.username) {
+//   return (
+//     <h4>
+//       You need to be logged in to see this page. Use the navigation links above to sign up or log in!
+//     </h4>
+//   );
+// }
 
 
   //const [userData, setUserData] = useState({});
@@ -66,9 +65,13 @@ if (!user?.username) {
     if (!token) {
       return false;
     }
-
     try {
-      const response = await deleteBook(bookId, token);
+      //const response = await deleteBook(bookId, token);
+      const response = await deleteBook({
+
+        variables: {bookId} 
+
+      });
 
       if (!response.ok) {
         throw new Error('something went wrong!');
@@ -84,9 +87,9 @@ if (!user?.username) {
   };
 
   // if data isn't here yet, say so
-  if (!userDataLength) {
-    return <h2>LOADING...</h2>;
-  }
+  // if (!userDataLength) {
+  //   return <h2>LOADING...</h2>;
+  // }
 
   return (
     <>
